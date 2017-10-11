@@ -92,9 +92,40 @@ if (selectorArg === "movie-this") {
 		console.log("Preview the song here: " + data.tracks.href);
 		console.log("") 
 	});
+} else if (selectorArg === "do-what-it-says") {
+	// file reader
+	var fs = require("fs");
 
+	fs.readFile("random.txt", "utf8", function(error, data) {
+		if (error) {
+			return console.log(error);
+		}
+
+	if (data === 'spotify-this-song,"I Want it That Way"') {
+		// Spotify
+		var Spotify = require('node-spotify-api');
+
+		// Use keys
+		var clientS = new Spotify(
+			keys.spotifyKeys
+		);
+
+		// Call the song
+		clientS.search({ type: 'track', query: "I Want it That Way", limit: 1 }, function(err, data) {
+			if (err) {
+				return console.log('Error occurred: ' + err);
+			}
+			
+			console.log("");
+			console.log("Artist: " + data.tracks.items[0].artists[0].name);
+			console.log("Album: " + data.tracks.items[0].album.name);
+			console.log("Song Name: " + data.tracks.items[0].name)
+			console.log("Preview the song here: " + data.tracks.href);
+			console.log("") 
+		});
+	}
+
+	});
 } else {
 	console.log("cannot read text, try again")
 }
-
-
