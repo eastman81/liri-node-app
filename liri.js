@@ -1,6 +1,6 @@
 // Packages
+var keys = require("./keys.js");
 var request = require("request");
-var twitter = require("twitter");
 
 
 // Find out what code to run
@@ -41,13 +41,16 @@ if (selectorArg === "movie-this") {
 	});
 } else if (selectorArg === "my-tweets") {
 	// Twitter
-	var keys = require("./keys.js");
-	var client = new twitter(
-		keys
+	var Twitter = require("twitter");
+
+	// Use my keys
+	var clientT = new Twitter(
+		keys.twitterKeys
 	);
 
+	// Preform get call
 	var params = {screen_name: 'hunteastland'};
-	client.get('statuses/user_timeline', params, function(error, tweets, response) {
+	clientT.get('statuses/user_timeline', params, function(error, tweets, response) {
 	  if (!error) {
 	    for (var i = 0; i < tweets.length; i++) {
 	    	console.log(tweets[i].created_at);
@@ -57,6 +60,41 @@ if (selectorArg === "movie-this") {
 	});
 } else if (selectorArg === "spotify-this-song") {
 	// Spotify
+	var Spotify = require('node-spotify-api');
+
+	// Use keys
+	var clientS = new Spotify(
+		keys.spotifyKeys
+	);
+
+	// Get string
+	var songArg = process.argv;
+	var songName = "";
+
+	for (var m = 3; m < songArg.length; m++) {
+		if (m > 3 && m < songArg.length) {
+			songName += "+" + songArg[m];
+		} else {
+			songName += songArg[m];
+		}
+	}
+
+	// Call the song
+	clientS.search({ type: 'track', query: songName, limit: 1 }, function(err, data) {
+		if (err) {
+			return console.log('Error occurred: ' + err);
+		}
+		
+		console.log("");
+		console.log("Artist: " + data.tracks.items[0].artists[0].name);
+		console.log("Album: " + data.tracks.items[0].album.name);
+		console.log("Song Name: " + data.tracks.items[0].name)
+		console.log("Preview the song here: " + data.tracks.href);
+		console.log("") 
+	});
+
 } else {
-	console.log("cannot read text")
+	console.log("cannot read text, try again")
 }
+
+
